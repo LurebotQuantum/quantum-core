@@ -2,7 +2,7 @@
 mod result;
 mod plugin;
 
-
+use log::{debug};
 use result::Result;
 use plugin::Plugin;
 use std::ffi::OsStr;
@@ -26,13 +26,13 @@ impl Quantum {
 
     /// Loads a plugin from a shared library
     pub fn load_plugin<S: AsRef<OsStr> + ?Sized>(&mut self, path: &S)
-        -> Result<&'static str> {
+        -> Result<String> {
         let mut path = Path::new(path).to_path_buf();
         if path.is_relative() {
             path = Path::new(&self.plugin_dir).join(path);
         }
         let plugin = Plugin::load(path)?;
-        let name = plugin.name();
+        let name = plugin.name().to_owned();
         self.plugins.push(plugin);
         Ok(name)
     }
